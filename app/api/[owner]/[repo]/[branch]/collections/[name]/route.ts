@@ -1,9 +1,11 @@
+import slugify from "slugify";
+
 export const maxDuration = 30;
 
 import { type NextRequest } from "next/server";
 import { readFns } from "@/fields/registry";
 import { parse } from "@/lib/serialization";
-import { deepMap, getDateFromFilename, getSchemaByName, safeAccess } from "@/lib/schema";
+import { deepMap, getDateFromFilename, getSchemaByName, safeAccess, getPrimaryField } from "@/lib/schema";
 import { getConfig } from "@/lib/utils/config";
 import { normalizePath } from "@/lib/utils/file";
 import { getAuth } from "@/lib/auth";
@@ -193,6 +195,7 @@ const parseContents = (
       // TODO: handle proper returns
       return {
         sha: item.sha,
+        primary: slugify(String(contentObject?.[getPrimaryField(schema) ?? "name"] ?? ""), { lower: true, strict: true }),
         name: item.name,
         parentPath: item.parentPath,
         path: item.path,
